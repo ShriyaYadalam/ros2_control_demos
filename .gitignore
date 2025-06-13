@@ -1,0 +1,7 @@
+build/
+install/
+log/
+*.pyc
+*.swp
+.venv/
+.colcon/
