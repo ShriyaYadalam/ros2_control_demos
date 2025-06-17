@@ -29,6 +29,7 @@ add_library(
   SHARED
   hardware/diffbot_system.cpp
 )
+
 target_compile_features(ros2_control_demo_example_2 PUBLIC cxx_std_17)
 target_include_directories(ros2_control_demo_example_2 PUBLIC
 $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/hardware/include>
@@ -39,20 +40,33 @@ ament_target_dependencies(
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
+find_library(LGPIO_LIBRARY lgpio)
+if(NOT LGPIO_LIBRARY)
+  message(FATAL_ERROR "lgpio library not found")
+endif()
+
+target_link_libraries(ros2_control_demo_example_2
+  PUBLIC
+    ${LGPIO_LIBRARY} 
+)
+
 # Export hardware plugins
 pluginlib_export_plugin_description_file(hardware_interface ros2_control_demo_example_2.xml)
 
-# INSTALL
+#Install
+install(FILES ros2_control_demo_example_2.xml
+  DESTINATION share/${PROJECT_NAME}
+)
 install(
   DIRECTORY hardware/include/
   DESTINATION include/ros2_control_demo_example_2
 )
 install(
-  DIRECTORY description/launch description/ros2_control description/urdf
+  DIRECTORY description 
   DESTINATION share/ros2_control_demo_example_2
 )
 install(
-  DIRECTORY bringup/launch bringup/config
+  DIRECTORY bringup
   DESTINATION share/ros2_control_demo_example_2
 )
 install(TARGETS ros2_control_demo_example_2

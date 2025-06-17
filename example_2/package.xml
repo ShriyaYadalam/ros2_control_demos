@@ -42,5 +42,7 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <ros2_control plugin="${prefix}/ros2_control_demo_example_2.xml"/>
   </export>
+
 </package>
