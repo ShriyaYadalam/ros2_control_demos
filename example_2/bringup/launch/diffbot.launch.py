@@ -28,11 +28,12 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='ros2_control_demo_example_2').find('ros2_control_demo_example_2')
     default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
-    # default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')    
+    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'config.rviz')     
     # default_map_yaml_path = '/home/shriya/ros2_ws/src/2wheeldrive/maps/mapfinal.yaml'
     
     print(f"Package share path: {pkg_share}")
     print(f"Controllers file path: {robot_controllers_path}")
+    print(f"RVIZ path: {default_rviz_config_path}") 
     # print(f"Map file path: {default_map_yaml_path}")
     # print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
 
@@ -185,14 +186,14 @@ def generate_launch_description():
         }]
     )
 
-    # rviz_node = Node(
-    #     package='rviz2',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     output='screen',
-    #     parameters=[{'use_sim_time': False}], 
-    #     arguments=['-d', LaunchConfiguration('rvizconfig')],
-    # )  
+    rviz_node = Node(
+         package='rviz2',
+         executable='rviz2',
+         name='rviz2',
+         output='screen',
+         parameters=[{'use_sim_time': False}], 
+         arguments=['-d', LaunchConfiguration('rvizconfig')],
+     )  
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -205,6 +206,11 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation time'
         ),
+        DeclareLaunchArgument(
+            name='rvizconfig', 
+            default_value=default_rviz_config_path,
+            description='Absolute path to rviz config file'
+        ), 
 
 
 
@@ -234,10 +240,10 @@ def generate_launch_description():
         #     actions=[map_server, amcl, lifecycle_manager]
         # ),
 
-        # TimerAction(
-        #     period=6.0,
-        #     actions=[rviz_node]
-        # )
+        TimerAction(
+             period=5.0,
+             actions=[rviz_node]
+        )
 
         # cmd_vel_bridge, 
         # relay_odom,

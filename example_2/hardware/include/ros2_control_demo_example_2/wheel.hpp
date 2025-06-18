@@ -13,13 +13,15 @@ class Wheel
     double cmd = 0;
     double vel = 0;
     double pos = 0;
-    double rads_per_count = 0;
+    double rads_l_per_count = 0;
+    double rads_r_per_count = 0;
     //rads_per_count = (2 * π) / counts_per_revolution
     //wheel_angle_radians = encoder_count * rads_per_count;
 
     volatile int en_count = 0;
     int prev_en_count = 0;
-    int counts_per_rev = 0; 
+    int counts_l_per_rev = 0;
+    int counts_r_per_rev = 0; 
     
     int dir_pin = 0;
     int pwm_pin = 0;
@@ -31,11 +33,14 @@ class Wheel
 
     Wheel() = default;
 
-    void setup(const std::string &wheel_name, int counts_per_rev)
+    void setup(const std::string &wheel_name, int counts_l_per_rev, int counts_r_per_rev)
     {
         name = wheel_name;
-        rads_per_count = (2*M_PI)/counts_per_rev;
-        this->counts_per_rev = counts_per_rev;
+        rads_l_per_count = (2*M_PI)/counts_l_per_rev;
+        rads_r_per_count = (2*M_PI)/counts_r_per_rev;
+
+        this->counts_l_per_rev = counts_l_per_rev;
+        this->counts_r_per_rev = counts_r_per_rev;
     }
     void setMotorPins(int dir_p, int pwm_p)
     {
@@ -58,6 +63,7 @@ class Wheel
 
         lgGpioClaimAlert(h, 0, LG_BOTH_EDGES, en_a, -1);
         lgGpioSetAlertsFunc(h,en_a,Wheel::en_callback, this);
+        std::cout << "ENCODER PINS HAVE BEEN SETTTT" <<std::endl;
     }
 
     void setMotorSpeed(double speed_rad_per_sec )
@@ -75,7 +81,7 @@ class Wheel
         double max_wheel_speed = 10.0; // rad/s
         double duty_cycle = std::min(abs_speed / max_wheel_speed, 1.0);
 
-        if (lgTxPwm(h, pwm_pin, 1000, duty_cycle, 0, 0) < 0) 
+        if (lgTxPwm(h, pwm_pin, 1000, abs_speed, 0, 0) < 0) 
         {
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
@@ -107,10 +113,17 @@ class Wheel
         }
     }
 
-    double getEncPos()
+    double getLeftEncPos()
     {
-        int relative_count = en_count % counts_per_rev; 
-        return relative_count * rads_per_count;  
+        int relative_count = en_count % counts_l_per_rev; 
+        //return relative_count * rads_per_count;
+        return en_count * rads_l_per_count;
+    }
+    double getRightEncPos()
+    {
+        int relative_count = en_count % counts_r_per_rev; 
+        //return relative_count * rads_per_count;
+        return en_count * rads_r_per_count;
     }
 
     void stop() 

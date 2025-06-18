@@ -28,7 +28,8 @@ struct Config
 {
 std::string left_wheel_name = "";
 std::string right_wheel_name = ""; 
-int enc_counts_per_rev = 0;
+int enc_l_counts_per_rev = 0;
+int enc_r_counts_per_rev = 0;
 };
 
   
