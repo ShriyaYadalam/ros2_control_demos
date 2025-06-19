@@ -36,8 +36,8 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   wheel_l.h = lgGpiochipOpen(4);
   wheel_r.h = lgGpiochipOpen(4);
 
-  wheel_l.setup(cfg_.left_wheel_name, cfg_.enc_l_counts_per_rev, cfg_.enc_r_counts_per_rev); 
-  wheel_r.setup(cfg_.right_wheel_name, cfg_.enc_l_counts_per_rev, cfg_.enc_r_counts_per_rev);
+  wheel_l.setup(cfg_.left_wheel_name, cfg_.enc_l_counts_per_rev, 0); 
+  wheel_r.setup(cfg_.right_wheel_name, 0, cfg_.enc_r_counts_per_rev);
 
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
@@ -127,10 +127,10 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating ...please wait...");
-  wheel_l.setMotorPins(25,12);
+  wheel_l.setMotorPins(25,12); 
   wheel_r.setMotorPins(16,13); 
   wheel_l.setEncPins(17,27);
-  wheel_r.setEncPins(5,6);
+  wheel_r.setEncPins(6,5);
   RCLCPP_INFO(get_logger(), "Successfully activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -150,12 +150,12 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_deactivate(
 hardware_interface::return_type DiffBotSystemHardware::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
-  //read encoder values  
+  //read encoder values
 
   double delta_seconds = period.seconds();
   int current_count_l = wheel_l.en_count;
   int count_diff_l = current_count_l - wheel_l.prev_en_count;
-  wheel_l.vel = (count_diff_l * wheel_l.rads_l_per_count) / delta_seconds;
+  wheel_l.vel = (count_diff_l * wheel_l.rads_l_per_count) / delta_seconds; //vel in rad/s
   wheel_l.prev_en_count = current_count_l;
   wheel_l.pos = wheel_l.getLeftEncPos();
   
@@ -165,7 +165,7 @@ hardware_interface::return_type DiffBotSystemHardware::read(
   wheel_r.prev_en_count = current_count_r;
   wheel_r.pos = wheel_r.getRightEncPos();
   
-  RCLCPP_INFO(get_logger(), "Left en = %d - %f & Right en_ct = %d - %f ", wheel_l.en_count, wheel_l.vel, wheel_r.en_count, wheel_r.vel); 
+  RCLCPP_INFO(get_logger(), "Left en = %d & %f & Right en_ct = %d & %f ", wheel_l.en_count, wheel_l.vel, wheel_r.en_count, wheel_r.vel); 
   return hardware_interface::return_type::OK;
 }
 
@@ -173,7 +173,12 @@ hardware_interface::return_type DiffBotSystemHardware::read(
 hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) 
 {
-  wheel_l.setMotorSpeed(wheel_l.cmd); 
+  
+  RCLCPP_INFO(get_logger(), "left : %f and right : %f", wheel_l.cmd, wheel_r.cmd);
+  
+  
+  
+  wheel_l.setMotorSpeed(wheel_l.cmd);
   wheel_r.setMotorSpeed(wheel_r.cmd);
   return hardware_interface::return_type::OK;
 }

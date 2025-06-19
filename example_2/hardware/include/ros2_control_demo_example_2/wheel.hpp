@@ -69,7 +69,7 @@ class Wheel
     void setMotorSpeed(double speed_rad_per_sec )
     { 
         if(speed_rad_per_sec>=0)
-        {    
+        {     
             lgGpioWrite(h,dir_pin,1);
         }
         else
@@ -78,10 +78,11 @@ class Wheel
         }
 
         double abs_speed = std::abs(speed_rad_per_sec);
-        double max_wheel_speed = 10.0; // rad/s
+        double max_wheel_speed = 13.5; // rad/s 37.58
         double duty_cycle = std::min(abs_speed / max_wheel_speed, 1.0);
+        double pwm_duty = duty_cycle*100; 
 
-        if (lgTxPwm(h, pwm_pin, 1000, abs_speed, 0, 0) < 0) 
+        if (lgTxPwm(h, pwm_pin, 1000, pwm_duty, 0, 0) < 0)
         {
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
@@ -115,13 +116,13 @@ class Wheel
 
     double getLeftEncPos()
     {
-        int relative_count = en_count % counts_l_per_rev; 
+        //int relative_count = en_count % counts_l_per_rev; 
         //return relative_count * rads_per_count;
         return en_count * rads_l_per_count;
     }
     double getRightEncPos()
     {
-        int relative_count = en_count % counts_r_per_rev; 
+        //int relative_count = en_count % counts_r_per_rev; 
         //return relative_count * rads_per_count;
         return en_count * rads_r_per_count;
     }
