@@ -18,6 +18,8 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "wheel.hpp"
 #include "PidController.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <rcl_interfaces/msg/set_parameters_result.hpp>
 
 namespace ros2_control_demo_example_2
 {
@@ -56,6 +58,7 @@ public:
 
   hardware_interface::return_type write(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
+    
   /**
    * \return logger of the SystemInterface.
    */
@@ -81,6 +84,11 @@ private:
 
   rclcpp::Node::SharedPtr param_node_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
+
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor>param_executor_;
+  std::thread param_thread_;
+
+  rcl_interfaces::msg::SetParametersResult onParameterChange(const std::vector<rclcpp::Parameter> & parameters); 
   
 };
 

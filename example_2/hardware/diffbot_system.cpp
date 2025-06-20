@@ -1,5 +1,8 @@
 #include "include/ros2_control_demo_example_2/diffbot_system.hpp"
 
+#include <rcl_interfaces/msg/set_parameters_result.hpp>
+#include <rcl_interfaces/msg/parameter_event.hpp>
+
 #include <chrono>
 #include <cmath>
 #include <cstddef>
@@ -35,12 +38,44 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   
   wheel_l.h = lgGpiochipOpen(4);
   wheel_r.h = lgGpiochipOpen(4);
-
   wheel_l.setup(cfg_.left_wheel_name, cfg_.enc_l_counts_per_rev, 0); 
   wheel_r.setup(cfg_.right_wheel_name, 0, cfg_.enc_r_counts_per_rev);
-  
-  pid_left = PIDController(0.8,0,0);
-  pid_right = PIDController(0.8,0,0);
+
+  param_node_ = rclcpp::Node::make_shared("diffbot_hardware_params");
+  param_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+  param_executor_->add_node(param_node_);
+
+  param_thread_ = std::thread([this](){
+  param_executor_->spin(); 
+  });
+
+  param_node_->declare_parameter("pid_left.kp", rclcpp::ParameterValue(0.8));
+  param_node_->declare_parameter("pid_left.ki", rclcpp::ParameterValue(0.0));
+  param_node_->declare_parameter("pid_left.kd", rclcpp::ParameterValue(0.0));
+
+  param_node_->declare_parameter("pid_right.kp", rclcpp::ParameterValue(0.8));
+  param_node_->declare_parameter("pid_right.ki", rclcpp::ParameterValue(0.0));
+  param_node_->declare_parameter("pid_right.kd", rclcpp::ParameterValue(0.0));
+
+  double left_kp = param_node_->get_parameter("pid_left.kp").as_double();
+  double left_ki = param_node_->get_parameter("pid_left.ki").as_double();
+  double left_kd = param_node_->get_parameter("pid_left.kd").as_double();
+
+  double right_kp = param_node_->get_parameter("pid_right.kp").as_double();
+  double right_ki = param_node_->get_parameter("pid_right.ki").as_double();
+  double right_kd = param_node_->get_parameter("pid_right.kd").as_double();
+
+  pid_left = PIDController(left_kp, left_ki, left_kd);
+  pid_right = PIDController(right_kp, right_ki, right_kd);
+
+  param_callback_handle_ = param_node_->add_on_set_parameters_callback
+  ( std::bind(&DiffBotSystemHardware::onParameterChange, this, std::placeholders::_1));
+
+  RCLCPP_INFO(*logger_, "PID parameters initialized - Left: P=%.3f I=%.3f D=%.3f, Right: P=%.3f I=%.3f D=%.3f", 
+    left_kp, left_ki, left_kd, right_kp, right_ki, right_kd);
+
+  //pid_left = PIDController(0.8,0,0);
+  //pid_right = PIDController(0.8,0,0);
 
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
@@ -145,6 +180,16 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_deactivate(
   RCLCPP_INFO(get_logger(), "Deactivating ...please wait...");
   wheel_l.stop();
   wheel_r.stop();
+
+  if(param_executor_)
+  {
+    param_executor_->cancel();
+  }
+  if(param_thread_.joinable())
+  {
+    param_thread_.join();
+  }
+
   RCLCPP_INFO(get_logger(), "Successfully deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -200,7 +245,57 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
   return hardware_interface::return_type::OK;
 }
 
+rcl_interfaces::msg::SetParametersResult DiffBotSystemHardware::onParameterChange(
+  const std::vector<rclcpp::Parameter> & parameters)
+{
+  rcl_interfaces::msg::SetParametersResult result;
+  result.successful = true;
+  
+  for (const auto & param : parameters) 
+  {
+    double value;
+
+    if(param.get_type()==rclcpp::ParameterType::PARAMETER_INTEGER)
+    {
+      value = static_cast<double>(param.as_int());
+    }
+    else
+    {
+      value = param.as_double();
+    }
+
+    if (param.get_name() == "pid_left.kp") {
+      pid_left.setKp(value);
+      RCLCPP_INFO(*logger_, "Updated left PID Kp to: %.3f", value);
+    }
+    else if (param.get_name() == "pid_left.ki") {
+      pid_left.setKi(value);
+      RCLCPP_INFO(*logger_, "Updated left PID Ki to: %.3f", value);
+    }
+    else if (param.get_name() == "pid_left.kd") {
+      pid_left.setKd(value);
+      RCLCPP_INFO(*logger_, "Updated left PID Kd to: %.3f", value);
+    }
+    else if (param.get_name() == "pid_right.kp") {
+      pid_right.setKp(value);
+      RCLCPP_INFO(*logger_, "Updated right PID Kp to: %.3f", value);
+    }
+    else if (param.get_name() == "pid_right.ki") {
+      pid_right.setKi(value);
+      RCLCPP_INFO(*logger_, "Updated right PID Ki to: %.3f", value);
+    }
+    else if (param.get_name() == "pid_right.kd") {
+      pid_right.setKd(value);
+      RCLCPP_INFO(*logger_, "Updated right PID Kd to: %.3f", value);
+    }
+  }
+  
+  return result;
+}
+
+
 }  // namespace ros2_control_demo_example_2
+
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(

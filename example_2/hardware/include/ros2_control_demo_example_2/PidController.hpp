@@ -4,7 +4,7 @@
 class PIDController 
 {
 public:
-    PIDController() : kp_(0), ki_(0), kd_(0), prev_error_(0.0), integral_(0.0) {}
+    PIDController() : kp_(0), ki_(0), kd_(0), prev_error_(0.0), integral_(0.0) {} //kp = 1.3 pe oscillations
 
     PIDController(double kp, double ki, double kd) : kp_(kp), ki_(ki), kd_(kd), prev_error_(0.0), integral_(0.0) {}
 
@@ -24,6 +24,10 @@ public:
         {
           output = -max_speed;
         }
+        
+        if(std::abs(error)<0.05)
+        return 0;
+      
         return output; 
     }
 
@@ -32,6 +36,15 @@ public:
         prev_error_ = 0.0;
         integral_ = 0.0;
     }
+
+    void setKp(double kp) {kp_ = kp;}
+    void setKi(double ki) {ki_ = ki;}
+    void setKd(double kd) {kd_ = kd;}
+
+    double getKp() const {return kp_;}
+    double getKi() const {return ki_;}
+    double getKd() const {return kd_;}
+
 
 private:
     double kp_;
