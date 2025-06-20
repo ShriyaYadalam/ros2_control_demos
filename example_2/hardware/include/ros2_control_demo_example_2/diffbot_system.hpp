@@ -33,6 +33,7 @@ int enc_l_counts_per_rev = 0;
 int enc_r_counts_per_rev = 0;
 };
 
+
   
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware);
@@ -74,6 +75,13 @@ private:
   Config cfg_; 
   Wheel wheel_l;
   Wheel wheel_r;
+  
+  PIDController pid_left;
+  PIDController pid_right;
+
+  rclcpp::Node::SharedPtr param_node_;
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
+  
 };
 
 }  // namespace ros2_control_demo_example_2

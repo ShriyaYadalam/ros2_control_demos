@@ -38,6 +38,9 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
 
   wheel_l.setup(cfg_.left_wheel_name, cfg_.enc_l_counts_per_rev, 0); 
   wheel_r.setup(cfg_.right_wheel_name, 0, cfg_.enc_r_counts_per_rev);
+  
+  pid_left = PIDController(0.8,0,0);
+  pid_right = PIDController(0.8,0,0);
 
   for (const hardware_interface::ComponentInfo & joint : info_.joints)
   {
@@ -171,15 +174,29 @@ hardware_interface::return_type DiffBotSystemHardware::read(
 
 //WRITE
 hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardware::write(
-  const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) 
+  const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
+  double dt = period.seconds();    
+  //RCLCPP_INFO(get_logger(), "left : %f and right : %f", wheel_l.cmd, wheel_r.cmd);
+   
   
-  RCLCPP_INFO(get_logger(), "left : %f and right : %f", wheel_l.cmd, wheel_r.cmd);
+  //double pid_effort_left = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt);
+  //double pid_effort_right = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
   
+  double left_speed = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt); 
+  double right_speed = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
   
+  //wheel_l.setMotorEffort(pid_effort_left);
+  //wheel_r.setMotorEffort(pid_effort_right);
   
-  wheel_l.setMotorSpeed(wheel_l.cmd);
-  wheel_r.setMotorSpeed(wheel_r.cmd);
+  wheel_l.setMotorSpeed(left_speed);
+  wheel_r.setMotorSpeed(right_speed);
+  
+  //wheel_l.setMotorSpeed(wheel_l.cmd);
+  //wheel_r.setMotorSpeed(wheel_r.cmd);
+  
+  RCLCPP_INFO(get_logger(), "LEFT current = %f & setpoint = %f ||| RIGHT current = %f & setpoint = %f", wheel_l.vel, wheel_l.cmd, wheel_r.vel, wheel_r.cmd);
+  
   return hardware_interface::return_type::OK;
 }
 

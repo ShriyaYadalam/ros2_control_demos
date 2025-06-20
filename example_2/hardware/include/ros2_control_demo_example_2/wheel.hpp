@@ -66,10 +66,10 @@ class Wheel
         std::cout << "ENCODER PINS HAVE BEEN SETTTT" <<std::endl;
     }
 
-    void setMotorSpeed(double speed_rad_per_sec )
-    { 
+   void setMotorSpeed(double speed_rad_per_sec )
+    {//solely for duty-cycle conversion 
         if(speed_rad_per_sec>=0)
-        {     
+        {   
             lgGpioWrite(h,dir_pin,1);
         }
         else
@@ -78,7 +78,7 @@ class Wheel
         }
 
         double abs_speed = std::abs(speed_rad_per_sec);
-        double max_wheel_speed = 13.5; // rad/s 37.58
+        double max_wheel_speed = 13.5; // rad/s 37.58 
         double duty_cycle = std::min(abs_speed / max_wheel_speed, 1.0);
         double pwm_duty = duty_cycle*100; 
 
@@ -86,7 +86,31 @@ class Wheel
         {
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
-    }
+    } 
+    
+    
+     /**   void setMotorEffort(double effort )
+    {
+        if(effort>=0)
+        {     
+            lgGpioWrite(h,dir_pin,1);
+        }
+        else 
+        {
+            lgGpioWrite(h,dir_pin,0);
+        }
+
+        double abs_effort = std::abs(effort);
+        double max_effort = 1; 
+        double duty_cycle = std::min(abs_effort / max_effort, 1.0);
+        double effort_duty = duty_cycle*60; 
+
+        if (lgTxPwm(h, pwm_pin, 1000, effort_duty, 0, 0) < 0)
+        {
+            std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
+        }
+    }**/
+    
 
      static void en_callback(int num_alerts, lgGpioAlert_p alerts, void* userdata)
     {
