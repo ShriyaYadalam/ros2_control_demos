@@ -213,7 +213,8 @@ hardware_interface::return_type DiffBotSystemHardware::read(
   wheel_r.prev_en_count = current_count_r;
   wheel_r.pos = wheel_r.getRightEncPos();
   
-  RCLCPP_INFO(get_logger(), "Left en = %d & %f & Right en_ct = %d & %f ", wheel_l.en_count, wheel_l.vel, wheel_r.en_count, wheel_r.vel); 
+  //commented this out
+  //RCLCPP_INFO(get_logger(), "Left en = %d & %f & Right en_ct = %d & %f ", wheel_l.en_count, wheel_l.vel, wheel_r.en_count, wheel_r.vel); 
   return hardware_interface::return_type::OK;
 }
 
@@ -223,24 +224,22 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
 {
   double dt = period.seconds();    
   //RCLCPP_INFO(get_logger(), "left : %f and right : %f", wheel_l.cmd, wheel_r.cmd);
-   
   
-  //double pid_effort_left = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt);
-  //double pid_effort_right = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
-  
+  //yehi
   double left_speed = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt); 
   double right_speed = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
-  
-  //wheel_l.setMotorEffort(pid_effort_left);
-  //wheel_r.setMotorEffort(pid_effort_right);
-  
-  wheel_l.setMotorSpeed(left_speed);
-  wheel_r.setMotorSpeed(right_speed);
-  
-  //wheel_l.setMotorSpeed(wheel_l.cmd);
-  //wheel_r.setMotorSpeed(wheel_r.cmd);
-  
-  RCLCPP_INFO(get_logger(), "LEFT current = %f & setpoint = %f ||| RIGHT current = %f & setpoint = %f", wheel_l.vel, wheel_l.cmd, wheel_r.vel, wheel_r.cmd);
+  wheel_l.setMotorSpeed(left_speed+wheel_l.vel);
+  wheel_r.setMotorSpeed(right_speed+wheel_r.vel);
+
+
+  //mmhmm
+  // double left_pwm = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt);
+  // double right_pwm = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
+  // wheel_l.setMotorPWM(left_pwm);
+  // wheel_r.setMotorPWM(right_pwm);
+   
+  //commented this ab
+  RCLCPP_INFO(get_logger(), "LEFT count = %d current = %f & setpoint = %f ||| RIGHT count = %d current = %f & setpoint = %f", wheel_l.en_count, wheel_l.vel, wheel_l.cmd, wheel_r.en_count, wheel_r.vel, wheel_r.cmd);
   
   return hardware_interface::return_type::OK;
 }

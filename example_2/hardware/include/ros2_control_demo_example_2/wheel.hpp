@@ -87,6 +87,27 @@ class Wheel
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
     } 
+
+    // void setMotorPWM(double pwm)
+    // {//solely for duty-cycle conversion 
+    //     if(pwm>=0)
+    //     {   
+    //         lgGpioWrite(h,dir_pin,1);
+    //     }
+    //     else
+    //     {
+    //         lgGpioWrite(h,dir_pin,0);
+    //     }
+
+    //     double abs_pwm = std::min(std::abs(pwm), 255.0);
+    //     double pwm_duty = abs_pwm/255.0*100.0;
+
+    //     if (lgTxPwm(h, pwm_pin, 1000, pwm_duty, 0, 0) < 0)
+    //     {
+    //         std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
+    //     }
+    // } 
+
     
     
      /**   void setMotorEffort(double effort )

@@ -16,6 +16,9 @@ public:
         prev_error_ = error;
         double output = kp_ * error + ki_ * integral_ + kd_ * derivative;
         double max_speed = 13.5;
+        
+        //double scale = 255/max_speed;
+
         if(output>max_speed)
         {
           output = max_speed;
@@ -24,8 +27,14 @@ public:
         {
           output = -max_speed;
         }
+
+        // output = output*20;
+        // if(output>255)
+        // output = 255;
+        // if(output<-255)
+        // output = -255; 
         
-        if(std::abs(error)<0.05)
+        if(std::abs(error)<0.01)
         return 0;
       
         return output; 

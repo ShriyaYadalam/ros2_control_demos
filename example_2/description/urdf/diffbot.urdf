@@ -259,8 +259,8 @@
             <plugin>ros2_control_demo_example_2/DiffBotSystemHardware</plugin>
             <param name="left_wheel_name">drive_l_joint</param> 
             <param name="right_wheel_name">drive_r_joint</param> 
-            <param name="enc_l_counts_per_rev">380</param> 
-            <param name="enc_r_counts_per_rev">366</param> 
+            <param name="enc_l_counts_per_rev">365</param> <!--380-->
+            <param name="enc_r_counts_per_rev">365</param> <!--366-->
         </hardware> 
 
         <joint name = "drive_l_joint">
