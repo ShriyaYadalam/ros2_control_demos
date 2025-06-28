@@ -28,8 +28,8 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='ros2_control_demo_example_2').find('ros2_control_demo_example_2')
     pkg_urdf = FindPackageShare(package= 'amr_urdf_v3').find('amr_urdf_v3') 
 
-    #default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
-    default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
+    default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
+    #default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'config.rviz')     
