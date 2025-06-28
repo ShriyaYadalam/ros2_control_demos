@@ -28,6 +28,7 @@ add_library(
   ros2_control_demo_example_2
   SHARED
   hardware/diffbot_system.cpp
+  hardware/include/ros2_control_demo_example_2/MiniPID.cpp
 )
 
 target_compile_features(ros2_control_demo_example_2 PUBLIC cxx_std_17)

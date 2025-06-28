@@ -1,0 +1,30 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/shriya/ros2_ws/install/visualization_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_service_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_publisher_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_action/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/navigation_goal_service/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/my_robot_interfaces/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/my_robot_description/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/src/navigation_goal_service/install/navigation_goal_service/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/shriya/ros2_ws/install/visualization_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_service_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_publisher_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_pkg/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/student_action/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/navigation_goal_service/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/my_robot_interfaces/local/lib/python3.10/dist-packages",
+        "/home/shriya/ros2_ws/install/my_robot_description/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages",
+        "/home/shriya/ros2_ws/src/navigation_goal_service/install/navigation_goal_service/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

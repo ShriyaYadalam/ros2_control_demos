@@ -21,6 +21,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rcl_interfaces/msg/set_parameters_result.hpp>
 
+#include "MiniPID.h"
+
 namespace ros2_control_demo_example_2
 {
 class DiffBotSystemHardware : public hardware_interface::SystemInterface
@@ -39,6 +41,8 @@ int enc_r_counts_per_rev = 0;
   
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware);
+
+  DiffBotSystemHardware():pid_l(18,0,0),pid_r(18,0,0){}
 
   hardware_interface::CallbackReturn on_init(
     const hardware_interface::HardwareInfo & info) override;
@@ -81,6 +85,9 @@ private:
   
   PIDController pid_left;
   PIDController pid_right;
+
+  MiniPID pid_l;
+  MiniPID pid_r;
 
   rclcpp::Node::SharedPtr param_node_;
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;

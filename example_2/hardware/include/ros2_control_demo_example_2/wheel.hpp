@@ -87,32 +87,11 @@ class Wheel
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
     } 
-
-    // void setMotorPWM(double pwm)
-    // {//solely for duty-cycle conversion 
-    //     if(pwm>=0)
-    //     {   
-    //         lgGpioWrite(h,dir_pin,1);
-    //     }
-    //     else
-    //     {
-    //         lgGpioWrite(h,dir_pin,0);
-    //     }
-
-    //     double abs_pwm = std::min(std::abs(pwm), 255.0);
-    //     double pwm_duty = abs_pwm/255.0*100.0;
-
-    //     if (lgTxPwm(h, pwm_pin, 1000, pwm_duty, 0, 0) < 0)
-    //     {
-    //         std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
-    //     }
-    // } 
-
     
     
-     /**   void setMotorEffort(double effort )
+    void setMotorPWM(double pwm )
     {
-        if(effort>=0)
+        if(pwm>=0)
         {     
             lgGpioWrite(h,dir_pin,1);
         }
@@ -121,16 +100,20 @@ class Wheel
             lgGpioWrite(h,dir_pin,0);
         }
 
-        double abs_effort = std::abs(effort);
-        double max_effort = 1; 
-        double duty_cycle = std::min(abs_effort / max_effort, 1.0);
-        double effort_duty = duty_cycle*60; 
+ 
+        double abs_pwm = std::abs(pwm);
+        double max_pwm = 255;
+        double duty_cycle = std::min(abs_pwm / max_pwm, 1.0);
+        double duty = duty_cycle*100;  
 
-        if (lgTxPwm(h, pwm_pin, 1000, effort_duty, 0, 0) < 0)
+        std::cout<<"wheel-"<<name<<"pwm-"<<pwm<<"dutycycle-"<<duty<<std::endl;
+
+
+        if (lgTxPwm(h, pwm_pin, 1000, duty, 0, 0) < 0)
         {
             std::cerr << "Failed to set PWM for wheel: " << name << std::endl;
         }
-    }**/
+    }
     
 
      static void en_callback(int num_alerts, lgGpioAlert_p alerts, void* userdata)

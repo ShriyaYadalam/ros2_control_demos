@@ -16,6 +16,8 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
 
+//#include "MiniPID.h"
+
 namespace ros2_control_demo_example_2
 {
 hardware_interface::CallbackReturn DiffBotSystemHardware::on_init( 
@@ -40,6 +42,13 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   wheel_r.h = lgGpiochipOpen(4);
   wheel_l.setup(cfg_.left_wheel_name, cfg_.enc_l_counts_per_rev, 0); 
   wheel_r.setup(cfg_.right_wheel_name, 0, cfg_.enc_r_counts_per_rev);
+
+  //MiniPID testing- 
+  //pid_l = MiniPID(0.4, 0, 0);
+  //pid_r = MiniPID(0.4, 0, 0);
+  pid_l.setOutputLimits(-255,255);
+  pid_r.setOutputLimits(-255,255);
+
 
   param_node_ = rclcpp::Node::make_shared("diffbot_hardware_params");
   param_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
@@ -213,7 +222,6 @@ hardware_interface::return_type DiffBotSystemHardware::read(
   wheel_r.prev_en_count = current_count_r;
   wheel_r.pos = wheel_r.getRightEncPos();
   
-  //commented this out
   //RCLCPP_INFO(get_logger(), "Left en = %d & %f & Right en_ct = %d & %f ", wheel_l.en_count, wheel_l.vel, wheel_r.en_count, wheel_r.vel); 
   return hardware_interface::return_type::OK;
 }
@@ -224,22 +232,37 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
 {
   double dt = period.seconds();    
   //RCLCPP_INFO(get_logger(), "left : %f and right : %f", wheel_l.cmd, wheel_r.cmd);
+   
+  //PWM CONTROL -
+  //double pid_effort_left = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt);
+  //double pid_effort_right = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
+  //wheel_l.setMotorEffort(pid_effort_left);
+  //wheel_r.setMotorEffort(pid_effort_right);
   
-  //yehi
+  //SPEED IN RAD/S CONTROL - 
   double left_speed = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt); 
   double right_speed = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
-  wheel_l.setMotorSpeed(left_speed+wheel_l.vel);
-  wheel_r.setMotorSpeed(right_speed+wheel_r.vel);
+  std::cout<<"speedl-"<<left_speed<<"   speedr-"<<right_speed<<std::endl;
+  wheel_l.setMotorSpeed(left_speed);
+  wheel_r.setMotorSpeed(right_speed);
+  
 
 
-  //mmhmm
-  // double left_pwm = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt);
-  // double right_pwm = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
-  // wheel_l.setMotorPWM(left_pwm);
-  // wheel_r.setMotorPWM(right_pwm);
-   
-  //commented this ab
-  RCLCPP_INFO(get_logger(), "LEFT count = %d current = %f & setpoint = %f ||| RIGHT count = %d current = %f & setpoint = %f", wheel_l.en_count, wheel_l.vel, wheel_l.cmd, wheel_r.en_count, wheel_r.vel, wheel_r.cmd);
+  // Using MiniPID
+  // double output_l = pid_l.getOutput(wheel_l.vel, wheel_l.cmd);
+  // double output_r = pid_r.getOutput(wheel_r.vel, wheel_r.cmd);
+  // std::cout<<"outputl-"<<output_l<<"outputr-"<<output_r<<std::endl;
+  // wheel_l.setMotorPWM(output_l);
+  // wheel_r.setMotorPWM(output_r);
+
+  
+ 
+  
+  //DIRECT SPEED CONTROL - NO PID
+  //wheel_l.setMotorSpeed(wheel_l.cmd);
+  //wheel_r.setMotorSpeed(wheel_r.cmd);
+  
+  RCLCPP_INFO(get_logger(), "LEFT count = %d current = %f & setpoint = %f ||| RIGHT count = %d current = %f & setpoint = %f",wheel_l.en_count, wheel_l.vel, wheel_l.cmd, wheel_r.en_count, wheel_r.vel, wheel_r.cmd);
   
   return hardware_interface::return_type::OK;
 }
