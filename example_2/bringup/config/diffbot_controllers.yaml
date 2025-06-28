@@ -10,12 +10,12 @@ controller_manager:
 
 diffbot_base_controller:
   ros__parameters:
-    left_wheel_names: ["drive_l_joint"]
-    right_wheel_names: ["drive_r_joint"]
+    left_wheel_names: ["left_motor_joint"] #drive_l_joint
+    right_wheel_names: ["right_motor_joint"] #drive_r_joint
 
-    wheel_separation: 0.28
+    wheel_separation: 0.35 #0.28
     #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
-    wheel_radius: 0.034
+    wheel_radius: 0.06 #0.034
 
     wheel_separation_multiplier: 1.0
     left_wheel_radius_multiplier: 1.0
@@ -32,7 +32,7 @@ diffbot_base_controller:
 
     cmd_vel_timeout: 0.5
     use_stamped_vel: false 
-    #publish_limited_velocity: true
+    #publish_limited_velocity: true 
     #velocity_rolling_window_size: 10
 
     # Velocity and acceleration limits

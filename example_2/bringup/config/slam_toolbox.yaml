@@ -1,0 +1,12 @@
+slam_toolbox:
+  ros__parameters:
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+    use_sim_time: false
+    minimum_laser_range: 0.15
+    maximum_laser_range: 12.0
+    resolution: 0.05
+
+    #Run with ros2 run slam_toolbox async_slam_toolbox_node --ros-args params-file /path_to/slam_toolbox.yaml

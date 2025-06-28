@@ -28,8 +28,8 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='ros2_control_demo_example_2').find('ros2_control_demo_example_2')
     pkg_urdf = FindPackageShare(package= 'amr_urdf_v3').find('amr_urdf_v3') 
 
-    default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
-    #default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
+    #default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
+    default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'config.rviz')     
@@ -41,7 +41,11 @@ def generate_launch_description():
     # print(f"Map file path: {default_map_yaml_path}")
     # print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
 
-    robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
+# robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
+# robot_description = ParameterValue(robot_description_content, value_type=str)
+
+    with open(default_model_path, 'r') as infp: 
+        robot_description_content = infp.read()
     robot_description = ParameterValue(robot_description_content, value_type=str)
 
     control_node = Node(
@@ -58,7 +62,8 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher', 
-        parameters=[{'robot_description': robot_description}]
+        parameters=[{'robot_description': robot_description}],
+        output='screen'
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -81,15 +86,37 @@ def generate_launch_description():
     #         'robot_description': ParameterValue(Command(['xacro ', default_model_path]), value_type=str),
     #         'use_sim_time': True
     #     }],
-    #     condition=UnlessCondition(LaunchConfiguration('gui'))
     # )
-    # joint_state_publisher_gui_node = Node(
+
+    # joint_state_publisher_gui = Node(
     #     package='joint_state_publisher_gui',
     #     executable='joint_state_publisher_gui',
     #     name='joint_state_publisher_gui',
-    #     parameters=[{'use_sim_time': True}],
-    #     condition=IfCondition(LaunchConfiguration('gui'))
+    #     output='screen',
+    #     # parameters=[{'use_sim_time': True}],
+    #     #condition=IfCondition(LaunchConfiguration('gui'))
     # )
+
+    passive_joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='passive_joint_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description':robot_description},
+            {'use_gui':False},
+            {'rate':30},
+            {'zeros':{
+                'back_caster_swivel_joint':0.0,
+                'back_caster_wheel_joint':0.0,
+                'front_caster_swivel_joint':0.0,
+                'front_caster_wheel_joint':0.0
+            }
+        }],
+    )
+
+    
+
     # gaz = ExecuteProcess(
     #     cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', 
     #          '-world', '/home/shriya/world1.world'], 
@@ -197,7 +224,24 @@ def generate_launch_description():
          output='screen',
          parameters=[{'use_sim_time': False}], 
          arguments=['-d', LaunchConfiguration('rvizconfig')],
-     )  
+     )
+
+    lidar_node = Node(
+        package='rplidar_ros',
+        executable='rplidar_composition',
+        name='lidar_node',
+        parameters=[{
+            'serial_port':'/dev/ttyUSB0',
+            'serial_baudrate':115200,
+            'frame_id':'lidar_link',
+            'inverted':False,
+            'angle_compensate':True,
+            'outlier_filter':True,
+            'scan_frequency':10.0,
+            'min_quality':15,
+        }],
+        output='screen'
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -216,13 +260,17 @@ def generate_launch_description():
             description='Absolute path to rviz config file'
         ), 
 
-
+#right waale ka direction ulta hai aur caster wheels nai aare
 
         # Start Gazebo and robot first
         # gaz,
 
         control_node,
         robot_state_publisher_node,
+        #passive_joint_state_publisher,
+        rviz_node,
+        lidar_node,
+        
 
         TimerAction(
             period=2.0,
@@ -244,10 +292,10 @@ def generate_launch_description():
         #     actions=[map_server, amcl, lifecycle_manager]
         # ),
 
-        TimerAction(
-             period=5.0,
-             actions=[rviz_node]
-        )
+        # TimerAction(
+        #      period=2.0,
+        #      actions=[rviz_node]
+        # )
 
         # cmd_vel_bridge, 
         # relay_odom,
