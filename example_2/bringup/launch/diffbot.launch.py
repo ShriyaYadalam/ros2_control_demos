@@ -16,7 +16,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource 
 from launch.conditions import IfCondition, UnlessCondition 
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
@@ -32,7 +32,16 @@ def generate_launch_description():
     default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'config.rviz')     
+
+    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'slam_config_rviz.rviz')     
+
+    default_rviz_config_path = PathJoinSubstitution([
+        FindPackageShare('ros2_control_demo_example_2'),
+        'rviz',
+        'slam_config_rviz.rviz'
+    ])
+
+    
     # default_map_yaml_path = '/home/shriya/ros2_ws/src/2wheeldrive/maps/mapfinal.yaml'
     
     print(f"Package share path: {pkg_share}")
@@ -41,8 +50,8 @@ def generate_launch_description():
     # print(f"Map file path: {default_map_yaml_path}")
     # print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
 
-# robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
-# robot_description = ParameterValue(robot_description_content, value_type=str)
+    # robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
+    # robot_description = ParameterValue(robot_description_content, value_type=str)
 
     with open(default_model_path, 'r') as infp: 
         robot_description_content = infp.read()
@@ -115,6 +124,8 @@ def generate_launch_description():
         }],
     )
 
+
+
     
 
     # gaz = ExecuteProcess(
@@ -170,14 +181,24 @@ def generate_launch_description():
     # ) 
 
 
-    # robot_localization_node = Node(
-    #     package='robot_localization',
-    #     executable='ekf_node',
-    #     name='ekf_filter_node',
-    #     output='screen',
-    #     parameters=[os.path.join(pkg_share, 'config/ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[os.path.join(pkg_share, 'bringup/config/ekf_filter_node.yaml')]
+        # remappings=[
+        # ('/odometry/filtered', '/odom')]
   
-    # )
+    )
+
+    slam_toolbox_node = Node(
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node', # async is better than sync for real-time dynamic mapping
+        name='slam_toolbox',
+        output='screen',
+        parameters=[os.path.join(pkg_share, 'bringup/config/slam_toolbox.yaml')]
+    )
 
     # amcl = Node(
     #     package='nav2_amcl',  
@@ -217,14 +238,16 @@ def generate_launch_description():
         }]
     )
 
+    rviz_config_arg = LaunchConfiguration('rvizconfig')
     rviz_node = Node(
-         package='rviz2',
-         executable='rviz2',
-         name='rviz2',
-         output='screen',
-         parameters=[{'use_sim_time': False}], 
-         arguments=['-d', LaunchConfiguration('rvizconfig')],
-     )
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            parameters=[{'use_sim_time': False}], 
+            arguments=['-d', rviz_config_arg],
+        )
+
 
     lidar_node = Node(
         package='rplidar_ros',
@@ -240,6 +263,14 @@ def generate_launch_description():
             'scan_frequency':10.0,
             'min_quality':15,
         }],
+        output='screen'
+    )
+
+
+    imu_node = Node(
+        package='ros2_control_demo_example_2',
+        executable='bno085_publisher.py',
+        name='bno085_publisher',
         output='screen'
     )
 
@@ -267,9 +298,13 @@ def generate_launch_description():
 
         control_node,
         robot_state_publisher_node,
-        #passive_joint_state_publisher,
+        passive_joint_state_publisher,
         rviz_node,
+        ekf_node,
         lidar_node,
+        imu_node,
+        slam_toolbox_node,
+         
         
 
         TimerAction(

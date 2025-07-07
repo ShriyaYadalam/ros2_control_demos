@@ -240,11 +240,11 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
   //wheel_r.setMotorEffort(pid_effort_right);
   
   //SPEED IN RAD/S CONTROL - 
-  double left_speed = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt); 
-  double right_speed = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
-  std::cout<<"speedl-"<<left_speed<<"   speedr-"<<right_speed<<std::endl;
-  wheel_l.setMotorSpeed(left_speed);
-  wheel_r.setMotorSpeed(right_speed);
+  // double left_speed = pid_left.compute(wheel_l.cmd, wheel_l.vel, dt); 
+  // double right_speed = pid_right.compute(wheel_r.cmd, wheel_r.vel, dt);
+  // std::cout<<"speedl-"<<left_speed<<"   speedr-"<<right_speed<<std::endl;
+  // wheel_l.setMotorSpeed(left_speed);
+  // wheel_r.setMotorSpeed(right_speed);
   
 
 
@@ -259,8 +259,8 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
  
   
   //DIRECT SPEED CONTROL - NO PID
-  //wheel_l.setMotorSpeed(wheel_l.cmd);
-  //wheel_r.setMotorSpeed(wheel_r.cmd);
+  wheel_l.setMotorSpeed(wheel_l.cmd);
+  wheel_r.setMotorSpeed(wheel_r.cmd);
   
   RCLCPP_INFO(get_logger(), "LEFT count = %d current = %f & setpoint = %f ||| RIGHT count = %d current = %f & setpoint = %f",wheel_l.en_count, wheel_l.vel, wheel_l.cmd, wheel_r.en_count, wheel_r.vel, wheel_r.cmd);
   

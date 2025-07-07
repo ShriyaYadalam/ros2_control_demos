@@ -15,6 +15,7 @@
   <author email="denis.stogl@stoglrobotics.de">Dr.-Ing. Denis Štogl</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>backward_ros</depend>
   <depend>hardware_interface</depend>
@@ -33,7 +34,13 @@
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
-
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend> 
+  <exec_depend>python3-pip</exec_depend>
+  
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>controller_manager</test_depend>
   <test_depend>launch_testing_ros</test_depend>

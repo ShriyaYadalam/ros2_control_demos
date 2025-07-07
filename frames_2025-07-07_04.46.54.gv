@@ -1,0 +1,17 @@
+digraph G {
+"map" -> "odom"[label=" Broadcaster: default_authority\nAverage rate: 7.297\nBuffer length: 5.071\nMost recent transform: 1751863614.675975\nOldest transform: 1751863609.605322\n"];
+"base_link" -> "camera_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"odom" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 30.006\nBuffer length: 4.999\nMost recent transform: 1751863614.365728\nOldest transform: 1751863609.366733\n"];
+"base_link" -> "imu_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "lidar_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "back_caster_swivel_link"[label=" Broadcaster: default_authority\nAverage rate: 15.196\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+"back_caster_swivel_link" -> "back_caster_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 15.196\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+"base_link" -> "front_caster_swivel_link"[label=" Broadcaster: default_authority\nAverage rate: 15.196\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+"front_caster_swivel_link" -> "front_caster_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 15.196\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+"base_link" -> "left_motor_link"[label=" Broadcaster: default_authority\nAverage rate: 15.394\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+"base_link" -> "right_motor_link"[label=" Broadcaster: default_authority\nAverage rate: 15.394\nBuffer length: 5.067\nMost recent transform: 1751863614.410414\nOldest transform: 1751863609.343407\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1751863614.4551697"[ shape=plaintext ] ;
+}->"map";
+}

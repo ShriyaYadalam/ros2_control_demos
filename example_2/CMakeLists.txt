@@ -19,9 +19,16 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
 # find dependencies
 find_package(backward_ros REQUIRED)
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
+
+ament_python_install_package(${PROJECT_NAME})
 
 ## COMPILE
 add_library(
@@ -76,6 +83,13 @@ install(TARGETS ros2_control_demo_example_2
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+
+install(
+  PROGRAMS
+    imu/bno085_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
