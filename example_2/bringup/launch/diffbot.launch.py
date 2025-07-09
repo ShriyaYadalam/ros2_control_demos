@@ -33,13 +33,14 @@ def generate_launch_description():
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
 
-    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'slam_config_rviz.rviz')     
+    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
 
-    default_rviz_config_path = PathJoinSubstitution([
-        FindPackageShare('ros2_control_demo_example_2'),
-        'rviz',
-        'slam_config_rviz.rviz'
-    ])
+
+    # default_rviz_config_path = PathJoinSubstitution([
+    #     FindPackageShare('ros2_control_demo_example_2'),
+    #     'rviz',
+    #     'slam_config_rviz.rviz'
+    # ])
 
     
     # default_map_yaml_path = '/home/shriya/ros2_ws/src/2wheeldrive/maps/mapfinal.yaml'
@@ -197,6 +198,7 @@ def generate_launch_description():
         executable='async_slam_toolbox_node', # async is better than sync for real-time dynamic mapping
         name='slam_toolbox',
         output='screen',
+
         parameters=[os.path.join(pkg_share, 'bringup/config/slam_toolbox.yaml')]
     )
 
@@ -298,7 +300,7 @@ def generate_launch_description():
 
         control_node,
         robot_state_publisher_node,
-        passive_joint_state_publisher,
+        #passive_joint_state_publisher, ##
         rviz_node,
         ekf_node,
         lidar_node,

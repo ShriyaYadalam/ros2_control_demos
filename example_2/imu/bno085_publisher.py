@@ -78,11 +78,17 @@ class BNO085Publisher(Node):
             msg.orientation.z = quat[3]  # z (k)
             
             # Orientation covariance (tune these values based on your sensor accuracy)
+            # msg.orientation_covariance = [
+            #     0.01, 0.0, 0.0,
+            #     0.0, 0.01, 0.0,
+            #     0.0, 0.0, 0.01 #YAW
+            # ]
+
             msg.orientation_covariance = [
-                0.01, 0.0, 0.0,
-                0.0, 0.01, 0.0,
-                0.0, 0.0, 0.01
-            ]
+                999.0, 0.0, 0.0,
+                0.0, 999.0, 0.0,
+                0.0, 0.0, 5.0 #YAW
+            ] #orientation is more stable than angular velocity - hence, higher confidence
             
             # Angular velocity (if available)
             if gyro is not None:
@@ -91,11 +97,19 @@ class BNO085Publisher(Node):
                 msg.angular_velocity.z = gyro[2]  # rad/s
                 
                 # Angular velocity covariance
+                # msg.angular_velocity_covariance = [
+                #     0.02, 0.0, 0.0,
+                #     0.0, 0.02, 0.0,
+                #     0.0, 0.0, 0.02
+                # ]
+
                 msg.angular_velocity_covariance = [
-                    0.02, 0.0, 0.0,
-                    0.0, 0.02, 0.0,
-                    0.0, 0.0, 0.02
-                ]
+                    999.0, 0.0, 0.0,
+                    0.0, 999.0, 0.0,
+                    0.0, 0.0, 8.0 #YAW VELOCITY
+                ] #3 an 6 - not bad || 5 and 8 better ig    
+            
+
             else:
                 msg.angular_velocity_covariance[0] = -1
             

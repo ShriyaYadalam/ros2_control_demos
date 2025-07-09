@@ -1,13 +1,48 @@
 slam_toolbox:
   ros__parameters:
-    publish_tf_map: true
+    # SLAM mode
+    mode: "async"  # for mapping while moving
+    use_sim_time: false
     use_odometry: true
+
+    # Topics and frames
     odom_topic: /odometry/filtered
-    odom_frame: odom
+    odom_frame: odom  
     map_frame: map
     base_frame: base_link
     scan_topic: /scan
-    use_sim_time: false
-    minimum_laser_range: 0.15
+
+    # Laser properties
+    minimum_laser_range: 0.05
     maximum_laser_range: 12.0
-    resolution: 0.05
+    resolution: 0.05  # same as map server
+
+    # TF and publishing
+    publish_tf_map: true
+    transform_publish_period: 0.05
+
+    # Scan processing
+    map_update_interval: 0.3
+    scan_queue_size: 10
+    max_laser_range: 12.0
+    minimum_time_interval: 0.2  # minimum time between scans to process
+
+    # Loop closure settings (crucial for reducing drift)
+    loop_closure_enabled: true
+    minimum_travel_distance: 0.1  # meters
+    minimum_travel_heading: 0.1   # radians
+    loop_closure_max_iterations: 10
+    loop_closure_max_distance: 1.0
+
+    # Submap handling
+    max_submaps_to_keep: 0  # 0 = keep all
+
+    # Pose graph optimization
+    optimization_frequency: 1.0
+    optimization_duration: 0.1
+
+    # Optional for better scan matching
+    scan_matching_parameters.use_scan_matching: true
+    scan_matching_strategy: 1
+    pose_optimization_strategy: 1
+
