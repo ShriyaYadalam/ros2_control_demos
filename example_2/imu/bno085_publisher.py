@@ -87,7 +87,7 @@ class BNO085Publisher(Node):
             msg.orientation_covariance = [
                 999.0, 0.0, 0.0,
                 0.0, 999.0, 0.0,
-                0.0, 0.0, 5.0 #YAW
+                0.0, 0.0, 3.0 #YAW 5
             ] #orientation is more stable than angular velocity - hence, higher confidence
             
             # Angular velocity (if available)
@@ -106,9 +106,9 @@ class BNO085Publisher(Node):
                 msg.angular_velocity_covariance = [
                     999.0, 0.0, 0.0,
                     0.0, 999.0, 0.0,
-                    0.0, 0.0, 8.0 #YAW VELOCITY
-                ] #3 an 6 - not bad || 5 and 8 better ig    
-            
+                    0.0, 0.0, 5.0 #YAW VELOCITY 8
+                ] #3 and 6 - not bad || 5 and 8 better ig    
+            #Robot in motion - Delays/overshooting -> reduce cv & shaky/erratic -> increase 
 
             else:
                 msg.angular_velocity_covariance[0] = -1

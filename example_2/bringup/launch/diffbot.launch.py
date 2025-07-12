@@ -33,8 +33,8 @@ def generate_launch_description():
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
 
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
-
+    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
+    default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
 
     # default_rviz_config_path = PathJoinSubstitution([
     #     FindPackageShare('ros2_control_demo_example_2'),
@@ -43,13 +43,13 @@ def generate_launch_description():
     # ])
 
     
-    # default_map_yaml_path = '/home/shriya/ros2_ws/src/2wheeldrive/maps/mapfinal.yaml'
+    default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/corridor2.yaml'
     
     print(f"Package share path: {pkg_share}")
     print(f"Controllers file path: {robot_controllers_path}")
     print(f"RVIZ path: {default_rviz_config_path}") 
-    # print(f"Map file path: {default_map_yaml_path}")
-    # print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
+    print(f"Map file path: {default_map_yaml_path}")
+    print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
 
     # robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
     # robot_description = ParameterValue(robot_description_content, value_type=str)
@@ -125,6 +125,16 @@ def generate_launch_description():
         }],
     )
 
+    cmd_vel_relay = Node(
+    package='topic_tools',
+    executable='relay',
+    name='cmd_vel_relay',
+    arguments=['/cmd_vel', '/diffbot_base_controller/cmd_vel_unstamped'],
+    parameters=[{'use_sim_time': False}],
+    output='screen'
+)
+
+
 
 
     
@@ -160,18 +170,18 @@ def generate_launch_description():
     # output='screen'  
     # )
 
-    # map_server = Node( 
-    #     package='nav2_map_server',
-    #     executable='map_server',
-    #     name='map_server',
-    #     output='screen',
-    #     parameters=[{
-    #         'use_sim_time': True,   
-    #         'yaml_filename': default_map_yaml_path,
-    #         'topic_name': 'map',
-    #         'frame_id': 'map'
-    #     }],
-    # )
+    map_server = Node( 
+        package='nav2_map_server',
+        executable='map_server',
+        name='map_server',
+        output='screen',
+        parameters=[{
+            'use_sim_time': False,   
+            'yaml_filename': default_map_yaml_path,
+            'topic_name': 'map',
+            'frame_id': 'map'
+        }],
+    )
 
     # static_tf_map_odom = Node(
     #     package='tf2_ros',
@@ -202,31 +212,31 @@ def generate_launch_description():
         parameters=[os.path.join(pkg_share, 'bringup/config/slam_toolbox.yaml')]
     )
 
-    # amcl = Node(
-    #     package='nav2_amcl',  
-    #     executable='amcl',
-    #     name='amcl', 
-    #     output='screen',   
-    #     parameters=[{
-    #         'use_sim_time': True,
-    #         'alpha1': 0.2,
-    #         'alpha2': 0.2,
-    #         'alpha3': 0.2,
-    #         'alpha4': 0.2,
-    #         'base_frame_id': 'base_link',
-    #         'global_frame_id': 'map',
-    #         'odom_frame_id': 'odom',
-    #         'scan_topic': 'scan',
-    #         'transform_tolerance': 0.1,
-    #         'max_particles': 2000,
-    #         'min_particles': 500,
-    #         'set_initial_pose': True, 
-    #         'initial_pose.x': 10.0,
-    #         'initial_pose.y': 10.0,
-    #         'initial_pose.z': 0.0,
-    #         'initial_pose.yaw': 0.0,            
-    #     }] 
-    # )
+    amcl = Node(
+        package='nav2_amcl',  
+        executable='amcl',
+        name='amcl', 
+        output='screen',   
+        parameters=[{
+            'use_sim_time': False,
+            'alpha1': 0.2,
+            'alpha2': 0.2,
+            'alpha3': 0.2,
+            'alpha4': 0.2,
+            'base_frame_id': 'base_link',
+            'global_frame_id': 'map',
+            'odom_frame_id': 'odom',
+            'scan_topic': 'scan',
+            'transform_tolerance': 0.1,
+            'max_particles': 2000,
+            'min_particles': 500,
+            'set_initial_pose': True, 
+            'initial_pose.x': 0.0,
+            'initial_pose.y': 0.0,
+            'initial_pose.z': 0.0,
+            'initial_pose.yaw': 0.0,            
+        }] 
+    )
 
     lifecycle_manager = Node(
         package='nav2_lifecycle_manager',
@@ -305,7 +315,12 @@ def generate_launch_description():
         ekf_node,
         lidar_node,
         imu_node,
-        slam_toolbox_node,
+        cmd_vel_relay,
+        #slam_toolbox_node,
+        
+        #lifecycle_manager
+        #map_server,
+        #amcl,
          
         
 
@@ -324,10 +339,10 @@ def generate_launch_description():
         #     actions=[robot_localization_node]
         # ),
 
-        # TimerAction(
-        #     period=5.0,
-        #     actions=[map_server, amcl, lifecycle_manager]
-        # ),
+        TimerAction(
+            period=3.0,
+            actions=[map_server, amcl, lifecycle_manager]
+        ),
 
         # TimerAction(
         #      period=2.0,

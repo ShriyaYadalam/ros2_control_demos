@@ -3,6 +3,7 @@ ekf_filter_node:
     frequency: 30.0
     sensor_timeout: 0.1
     two_d_mode: true
+    use_control_input: false
     publish_tf: true #ISKO TF PUBLISH KARNA CHAIYE
     # imu0_angular_velocity_covariance: 10
     # imu0_orientation_covariance: 5
