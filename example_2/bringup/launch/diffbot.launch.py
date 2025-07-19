@@ -33,8 +33,8 @@ def generate_launch_description():
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
 
-    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
-    default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
+    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
+    #default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
 
     # default_rviz_config_path = PathJoinSubstitution([
     #     FindPackageShare('ros2_control_demo_example_2'),
@@ -43,7 +43,7 @@ def generate_launch_description():
     # ])
 
     
-    default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/corridor2.yaml'
+    default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/corridor3.yaml'
     
     print(f"Package share path: {pkg_share}")
     print(f"Controllers file path: {robot_controllers_path}")
@@ -212,32 +212,6 @@ def generate_launch_description():
         parameters=[os.path.join(pkg_share, 'bringup/config/slam_toolbox.yaml')]
     )
 
-    # amcl = Node(
-    #     package='nav2_amcl',  
-    #     executable='amcl',
-    #     name='amcl', 
-    #     output='screen',   
-    #     parameters=[{
-    #         'use_sim_time': False,
-    #         'alpha1': 0.2,
-    #         'alpha2': 0.2,
-    #         'alpha3': 0.2,
-    #         'alpha4': 0.2,
-    #         'base_frame_id': 'base_link',
-    #         'global_frame_id': 'map',
-    #         'odom_frame_id': 'odom',
-    #         'scan_topic': 'scan',
-    #         'transform_tolerance': 0.1,
-    #         'max_particles': 2000,
-    #         'min_particles': 500,
-    #         'set_initial_pose': True, 
-    #         'initial_pose.x': 0.0,
-    #         'initial_pose.y': 0.0,
-    #         'initial_pose.z': 0.0,
-    #         'initial_pose.yaw': 0.0,            
-    #     }] 
-    # )
-
     amcl = Node(
         package='nav2_amcl',  
         executable='amcl',
@@ -245,7 +219,7 @@ def generate_launch_description():
         output='screen',   
         parameters=[{
             'use_sim_time': False,
-            'alpha1': 0.3,
+            'alpha1': 0.2,
             'alpha2': 0.2,
             'alpha3': 0.2,
             'alpha4': 0.2,
@@ -253,35 +227,7 @@ def generate_launch_description():
             'global_frame_id': 'map',
             'odom_frame_id': 'odom',
             'scan_topic': 'scan',
-            'beam_skip_distance': 0.5, #If neighboring beams differ by more than 0.5m in range, they’re not part of the same surface
-            'beam_skip_error_threshold': 0.9,
-            'beam_skip_threshold': 0.3, #if more than this % of beams look inconsistent, skip the bad ones.
-            'do_beamskip': True, #try - originally false
             'transform_tolerance': 0.1,
-            
-            'laser_likelihood_max_dist': 2.0,
-            'laser_max_range': 15.0, #100.0
-            'laser_min_range': 0.1, #-1.0
-            'laser_model_type': 'likelihood_field',
-            'max_beams': 60, 
-
-            'pf_err': 0.05, #I want my particle guesses to be within 5cm of each other
-            'pf_z': 0.99, #confidence % to lock in pose
-            'recovery_alpha_fast': 0.1,
-            'recovery_alpha_slow': 0.001,
-            'resample_interval': 1,
-            'robot_model_type': "nav2_amcl::DifferentialMotionModel",
-            'save_pose_rate': 0.5,
-            'sigma_hit': 0.2,
-            'tf_broadcast': True,
-
-            'update_min_a': 0.1, #0.2 It updates after this minimum distance travelled - translational & rotational
-            'update_min_d': 0.1, #0.25 #TRIGGER UPDATES MORE OFTEN
-            'z_hit': 0.6, #Probability that laser scans match the map  0.5
-            'z_max': 0.05, #0.05
-            'z_rand': 0.2, #Probability that laser scans are from random unpredicted obstacles 0.5
-            'z_short': 0.15, #0.05
-
             'max_particles': 2000,
             'min_particles': 500,
             'set_initial_pose': True, 
@@ -291,6 +237,60 @@ def generate_launch_description():
             'initial_pose.yaw': 0.0,            
         }] 
     )
+
+    # amcl = Node(
+    #     package='nav2_amcl',  
+    #     executable='amcl',
+    #     name='amcl', 
+    #     output='screen',   
+    #     parameters=[{
+    #         'use_sim_time': False,
+    #         'alpha1': 0.3,
+    #         'alpha2': 0.2,
+    #         'alpha3': 0.2,
+    #         'alpha4': 0.2,
+    #         'base_frame_id': 'base_link',
+    #         'global_frame_id': 'map',
+    #         'odom_frame_id': 'odom',
+    #         'scan_topic': 'scan',
+    #         'beam_skip_distance': 0.5, #If neighboring beams differ by more than 0.5m in range, they’re not part of the same surface
+    #         'beam_skip_error_threshold': 0.9,
+    #         'beam_skip_threshold': 0.3, #if more than this % of beams look inconsistent, skip the bad ones.
+    #         'do_beamskip': True, #try - originally false
+    #         'transform_tolerance': 0.1,
+            
+    #         'laser_likelihood_max_dist': 2.0,
+    #         'laser_max_range': 15.0, #100.0
+    #         'laser_min_range': 0.1, #-1.0
+    #         'laser_model_type': 'likelihood_field',
+    #         'max_beams': 60, 
+
+    #         'pf_err': 0.05, #I want my particle guesses to be within 5cm of each other
+    #         'pf_z': 0.99, #confidence % to lock in pose
+    #         'recovery_alpha_fast': 0.1,
+    #         'recovery_alpha_slow': 0.001,
+    #         'resample_interval': 1,
+    #         'robot_model_type': "nav2_amcl::DifferentialMotionModel",
+    #         'save_pose_rate': 0.5,
+    #         'sigma_hit': 0.2,
+    #         'tf_broadcast': True,
+
+    #         'update_min_a': 0.1, #0.2 It updates after this minimum distance travelled - translational & rotational
+    #         'update_min_d': 0.1, #0.25 #TRIGGER UPDATES MORE OFTEN
+    #         'z_hit': 0.6, #Probability that laser scans match the map  0.5
+    #         'z_max': 0.05, #0.05
+    #         'z_rand': 0.2, #Probability that laser scans are from random unpredicted obstacles 0.5
+    #         'z_short': 0.15, #0.05
+
+    #         'max_particles': 2000, 
+    #         'min_particles': 500,
+    #         'set_initial_pose': True, 
+    #         'initial_pose.x': 0.0,
+    #         'initial_pose.y': 0.0,
+    #         'initial_pose.z': 0.0,
+    #         'initial_pose.yaw': 0.0,            
+    #     }] 
+    # )
 
     # amcl = Node(
     #     package='nav2_amcl',  

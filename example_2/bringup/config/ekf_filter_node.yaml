@@ -9,14 +9,27 @@ ekf_filter_node:
     # imu0_orientation_covariance: 5
 
     # Wheel odometry from diff drive controller
+
+
+
+
     odom0: /diffbot_base_controller/odom
     odom0_config: [true, false, false,    # x, y, z position
                    false, false, true,   # roll, pitch, yaw
                    true, false, false,    # x, y, z velocity
                    false, false, true,   # roll, pitch, yaw velocity
                    false, false, false]  # x, y, z acceleration is usually not measured well from odom
-    # IMU data
     
+
+
+    #CHECK - COMMENT OUT THESE IF NECESSARY 
+    # odom0_pose_rejection_threshold: 5.0     # meters
+    # odom0_twist_rejection_threshold: 2.0    # rad/s If difference between incoming pose/twist and EKF's current estimate > this, it doesn't fuse it.
+    # odom0_queue_size: 10.0 # how many messages to buffer before fusing
+
+    
+
+    #IMU data
 
     imu0: /demo/imu
     imu0_config: [false, false, false,   # position
@@ -24,6 +37,14 @@ ekf_filter_node:
                   false, false, false,   # linear velocity
                   false, false, true,    # angular velocity (only yaw)
                   false, false, false]   # linear acceleration
+
+    imu0_orientation_covariance: [999.0, 0.0, 0.0,
+                              0.0, 999.0, 0.0,
+                              0.0, 0.0, 0.01]  # Only yaw
+
+    imu0_angular_velocity_covariance: [999.0, 0.0, 0.0,
+                                   0.0, 999.0, 0.0,
+                                   0.0, 0.0, 0.02]  # Only yaw rate
 
 
     # Frame configuration
