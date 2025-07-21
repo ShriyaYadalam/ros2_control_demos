@@ -20,7 +20,7 @@ ekf_filter_node:
                    false, false, true,   # roll, pitch, yaw velocity
                    false, false, false]  # x, y, z acceleration is usually not measured well from odom
     
-
+    
 
     #CHECK - COMMENT OUT THESE IF NECESSARY 
     # odom0_pose_rejection_threshold: 5.0     # meters

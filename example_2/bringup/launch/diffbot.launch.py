@@ -33,8 +33,8 @@ def generate_launch_description():
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
 
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
-    #default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
+    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
+    default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
 
     # default_rviz_config_path = PathJoinSubstitution([
     #     FindPackageShare('ros2_control_demo_example_2'),
@@ -43,7 +43,7 @@ def generate_launch_description():
     # ])
 
     
-    default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/corridor3.yaml'
+    default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/office2.yaml'
     
     print(f"Package share path: {pkg_share}")
     print(f"Controllers file path: {robot_controllers_path}")
@@ -413,7 +413,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         #passive_joint_state_publisher, ##
         rviz_node,
-        ekf_node,
+        #ekf_node,
         lidar_node,
         imu_node,
         cmd_vel_relay,
