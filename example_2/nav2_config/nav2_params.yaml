@@ -175,16 +175,27 @@ controller_server:
       stateful: True
 
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      # BaseObstacle.scale: 0.02
+      # PathAlign.scale: 32.0 
+      # PathAlign.forward_point_distance: 0.1x
+      # GoalAlign.scale: 40.0 #make this 15/25 if too jittery TO PRIORITIZE ALIGNING TO GOAL OVER PATH 
+      # GoalAlign.forward_point_distance: 0.1
+      # PathDist.scale: 32.0
+      # GoalDist.scale: 40.0
+      # RotateToGoal.scale: 32.0
+      # RotateToGoal.slowing_factor: 5.0
+      # Oscillation.scale: 1.0 
+      # RotateToGoal.lookahead_time: -1.0
       BaseObstacle.scale: 0.02
-      PathAlign.scale: 32.0 
-      PathAlign.forward_point_distance: 0.1
-      GoalAlign.scale: 40.0 #make this 15/25 if too jittery TO PRIORITIZE ALIGNING TO GOAL OVER PATH 
+      PathAlign.scale: 45.0 
+      PathAlign.forward_point_distance: 0.2
+      GoalAlign.scale: 25.0 #make this 15/25 if too jittery TO PRIORITIZE ALIGNING TO GOAL OVER PATH 
       GoalAlign.forward_point_distance: 0.1
-      PathDist.scale: 32.0
-      GoalDist.scale: 40.0
+      PathDist.scale: 38.0
+      GoalDist.scale: 35.0
       RotateToGoal.scale: 32.0
-      RotateToGoal.slowing_factor: 5.0
-      Oscillation.scale: 1.0 
+      RotateToGoal.slowing_factor: 8.0
+      Oscillation.scale: 2.0 
       RotateToGoal.lookahead_time: -1.0
 
 local_costmap:

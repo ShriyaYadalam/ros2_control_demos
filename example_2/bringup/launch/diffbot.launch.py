@@ -413,7 +413,7 @@ def generate_launch_description():
         robot_state_publisher_node,
         #passive_joint_state_publisher, ##
         rviz_node,
-        #ekf_node,
+        ekf_node,
         lidar_node,
         imu_node,
         cmd_vel_relay,
