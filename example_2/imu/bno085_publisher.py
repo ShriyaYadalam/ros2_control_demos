@@ -147,7 +147,6 @@ class BNO085Publisher(Node):
             -bno_x      # robot z = -BNO085 x
         ]
         
-        # Return in [w, x, y, z] format (don't change order here)
         return robot_quat
     
     def correct_angular_velocity_frame(self, bno_gyro):

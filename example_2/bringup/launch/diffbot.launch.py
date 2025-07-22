@@ -28,20 +28,12 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='ros2_control_demo_example_2').find('ros2_control_demo_example_2')
     pkg_urdf = FindPackageShare(package= 'amr_urdf_v3').find('amr_urdf_v3') 
 
-    #default_model_path = os.path.join(pkg_share, 'description', 'urdf', 'diffbot.urdf')
-    default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf')
+    default_model_path = os.path.join(pkg_urdf, 'urdf', 'amr_urdf_v3.urdf') #Path to amr urdf
 
     robot_controllers_path = os.path.join(pkg_share, 'bringup', 'config', 'diffbot_controllers.yaml')
 
-    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz')
+    #default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'custom_config.rviz') #Normal RViz view
     default_rviz_config_path = os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz')  #RViz Nav2 view
-
-    # default_rviz_config_path = PathJoinSubstitution([
-    #     FindPackageShare('ros2_control_demo_example_2'),
-    #     'rviz',
-    #     'slam_config_rviz.rviz'
-    # ])
-
     
     default_map_yaml_path = '/home/rpi_ws/src/ros2_control_demos/example_2/maps/office2.yaml'
     
@@ -50,9 +42,6 @@ def generate_launch_description():
     print(f"RVIZ path: {default_rviz_config_path}") 
     print(f"Map file path: {default_map_yaml_path}")
     print(f"Map file exists: {os.path.exists(default_map_yaml_path)}")
-
-    # robot_description_content = Command(['xacro ', LaunchConfiguration('model')])
-    # robot_description = ParameterValue(robot_description_content, value_type=str)
 
     with open(default_model_path, 'r') as infp: 
         robot_description_content = infp.read()
@@ -124,6 +113,7 @@ def generate_launch_description():
             }
         }],
     )
+    #Caster wheels aren't being displayed on rviz -
 
     cmd_vel_relay = Node(
     package='topic_tools',
@@ -132,44 +122,8 @@ def generate_launch_description():
     arguments=['/cmd_vel', '/diffbot_base_controller/cmd_vel_unstamped'],
     parameters=[{'use_sim_time': False}],
     output='screen'
-)
-
-
-
-
-    
-
-    # gaz = ExecuteProcess(
-    #     cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', 
-    #          '-world', '/home/shriya/world1.world'], 
-    #     output='screen'
-    # )
-    # spawn_entity = Node(
-    #     package='gazebo_ros',
-    #     executable='spawn_entity.py',
-    #     parameters=[{'use_sim_time': True}],
-    #     arguments=['-entity', '2wheeldrive', '-topic', 'robot_description', '-x', '-5', '-y', '-5'],
-    #     output='screen'
-    # ) 
-
-    # cmd_vel_bridge = Node( 
-    # package='topic_tools',
-    # executable='relay',
-    # name='cmd_vel_bridge',
-    # arguments=['/cmd_vel', '/demo/cmd_vel'],
-    # parameters=[{'use_sim_time': False}], 
-    # output='screen'
-    # ) 
-
-    # relay_odom = Node(
-    # package='topic_tools',
-    # executable='relay',
-    # name='odom_relay',
-    # arguments=['/demo/odom', '/odom'],
-    # parameters=[{'use_sim_time': False}],
-    # output='screen'  
-    # )
-
+    )
+   
     map_server = Node( 
         package='nav2_map_server',
         executable='map_server',
@@ -182,15 +136,6 @@ def generate_launch_description():
             'frame_id': 'map'
         }],
     )
-
-    # static_tf_map_odom = Node(
-    #     package='tf2_ros',
-    #     executable='static_transform_publisher',
-    #     name='static_tf_pub_map_odom',
-    #     arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
-    #     parameters=[{'use_sim_time': True}]
-    # ) 
-
 
     ekf_node = Node(
         package='robot_localization',
@@ -208,7 +153,6 @@ def generate_launch_description():
         executable='async_slam_toolbox_node', # async is better than sync for real-time dynamic mapping
         name='slam_toolbox',
         output='screen',
-
         parameters=[os.path.join(pkg_share, 'bringup/config/slam_toolbox.yaml')]
     )
 
@@ -404,25 +348,15 @@ def generate_launch_description():
             description='Absolute path to rviz config file'
         ), 
 
-#right waale ka direction ulta hai aur caster wheels nai aare
-
-        # Start Gazebo and robot first
-        # gaz,
-
         control_node,
         robot_state_publisher_node,
-        #passive_joint_state_publisher, ##
+        #passive_joint_state_publisher,
         rviz_node,
-        ekf_node,
+        #ekf_node,
         lidar_node,
         imu_node,
         cmd_vel_relay,
         #slam_toolbox_node,
-        
-        #lifecycle_manager
-        #map_server,
-        #amcl,
-         
         
 
         TimerAction(
@@ -435,23 +369,9 @@ def generate_launch_description():
             actions=[joint_state_broadcaster_spawner]
         ),
 
-        # TimerAction(
-        #     period=4.0,
-        #     actions=[robot_localization_node]
-        # ),
-
         TimerAction(
             period=3.0,
             actions=[map_server, amcl, lifecycle_manager]
-        ),
-
-        # TimerAction(
-        #      period=2.0,
-        #      actions=[rviz_node]
-        # )
-
-        # cmd_vel_bridge, 
-        # relay_odom,
-        # joint_state_publisher_node,
-        # spawn_entity,
+        ), 
+        
     ])

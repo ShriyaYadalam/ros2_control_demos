@@ -78,7 +78,7 @@ class Wheel
         }
 
         double abs_speed = std::abs(speed_rad_per_sec);
-        double max_wheel_speed = 13.5; // rad/s 37.58 is this rpm or rad/s - max yaha 29 tak jaray?
+        double max_wheel_speed = 13.5;
         double duty_cycle = std::min(abs_speed / max_wheel_speed, 1.0);
         double pwm_duty = duty_cycle*100; 
 

@@ -262,7 +262,6 @@ hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardw
   wheel_l.setMotorSpeed(wheel_l.cmd);
   wheel_r.setMotorSpeed(wheel_r.cmd);
   
-  //yeh hai you commented this out
   RCLCPP_INFO(get_logger(), "LEFT count = %d current = %f & setpoint = %f ||| RIGHT count = %d current = %f & setpoint = %f",wheel_l.en_count, wheel_l.vel, wheel_l.cmd, wheel_r.en_count, wheel_r.vel, wheel_r.cmd);
   
   return hardware_interface::return_type::OK;

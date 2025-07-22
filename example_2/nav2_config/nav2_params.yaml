@@ -137,8 +137,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::StoppedGoalChecker" 
-      xy_goal_tolerance: 0.25 #0.3
-      yaw_goal_tolerance: 0.3 #0.4 
+      xy_goal_tolerance: 0.25 
+      yaw_goal_tolerance: 0.3 
 
 
     # DWB parameters
@@ -148,18 +148,18 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: -0.19 #ENABLING BACKWARD MOTION
       min_vel_y: 0.0 
-      max_vel_x: 0.19 #0.26
+      max_vel_x: 0.19 
       max_vel_y: 0.0
-      max_vel_theta: 0.3  #0.8 #1
+      max_vel_theta: 0.3  
       min_speed_xy: 0.0
-      max_speed_xy: 0.18 #0.26
+      max_speed_xy: 0.18 
       min_speed_theta: 0.0
-      acc_lim_x: 2.0 #2.5
+      acc_lim_x: 2.0 
       acc_lim_y: 0.0
-      acc_lim_theta: 2.0 #3.2
+      acc_lim_theta: 2.0 
       decel_lim_x: -2.0
       decel_lim_y: 0.0
-      decel_lim_theta: -2.0 #-3.2
+      decel_lim_theta: -2.0 
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
@@ -167,9 +167,9 @@ controller_server:
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
-      xy_goal_tolerance: 0.25 #0.3
-      yaw_goal_tolerance: 0.3 #0.4
-      trans_stopped_velocity: 0.02 #0.25 lol L
+      xy_goal_tolerance: 0.25 
+      yaw_goal_tolerance: 0.3 
+      trans_stopped_velocity: 0.02
       rot_stopped_velocity: 0.01 
       short_circuit_trajectory_evaluation: True
       stateful: True
@@ -210,12 +210,12 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      robot_radius: 0.19 #0.22
+      robot_radius: 0.19 
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 8.0 #INCREASED FROM 3->8 TO AVOID OBSTACLES BETTER 
-        inflation_radius: 0.25 #0.5
+        inflation_radius: 0.25 
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -249,7 +249,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: False
-      robot_radius: 0.19 #0.22
+      robot_radius: 0.19 
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -273,7 +273,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.3 #0.55
+        inflation_radius: 0.3 
       always_send_full_costmap: True
 
 map_server:
@@ -370,35 +370,3 @@ velocity_smoother:
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
-
-# slam_toolbox:
-#   ros__parameters:
-#     # Use filtered odometry instead of raw
-#     odom_frame: odom
-#     base_frame: base_link
-#     map_frame: map
-    
-#     # CRITICAL: Tell SLAM to use filtered odometry
-#     use_scan_matching: true
-#     use_scan_barycenter: true
-    
-#     # Optional: If you want to be explicit about the odom topic
-#     odom_topic: /odometry/filtered  # Uncomment if needed
-    
-#     # Basic SLAM parameters
-#     mode: mapping
-#     resolution: 0.05
-#     max_laser_range: 20.0
-#     minimum_travel_distance: 0.5
-#     minimum_travel_heading: 0.5
-    
-#     # For better performance with obstacles
-#     scan_buffer_size: 10
-#     scan_buffer_maximum_scan_distance: 10.0
-#     link_match_minimum_response_fine: 0.1
-#     link_scan_maximum_distance: 1.5
-#     loop_search_maximum_distance: 3.0
-    
-#     # Transform settings
-#     transform_publish_period: 0.02
-#     map_update_interval: 5.0
